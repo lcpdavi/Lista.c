@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-
 typedef struct Pessoa{
     int id;
     char nome[30];
@@ -28,14 +27,14 @@ typedef struct Pessoa{
     return novaPessoa;//endereco de memoria alocado para nova pessoa
  }
 
- Pessoa* cadastrar(Pessoa *lista){
+Pessoa* cadastrar(Pessoa *lista){
     Pessoa *novaPessoa = criarPessoa();
     //inserir as informacoes
     srand(time(NULL));
     novaPessoa->id = rand() % 100;
     printf("Digite o nome:\n");
     fflush(stdin);
-    fgets(novaPessoa->nome, sizeof(novaPessoa), stdin);
+    fgets(novaPessoa->nome, sizeof(novaPessoa->nome), stdin);
     printf("Digite a idade:\n");
     fflush(stdin);
     scanf("%d", &novaPessoa->idade);
@@ -44,19 +43,97 @@ typedef struct Pessoa{
     if(lista == NULL){
         return novaPessoa;
     }else{
-        //percorrer a lista ate encontrar a pessoa que apornta para NULL
+        //percorrer a lista ate encontrar a pessoa que aponta para NULL()
+
+        // quando a lista for nula, ela vai inserir uma nova pessoa onde ira pegar o endereco de memoria da 
+        // nova pessoa, dai vai deixar de ser NULL e vai pra outra lista
+
+        //o atual vai receber o endereço de memoria da proxima pessoa ate ficar NULL, e o ulimo aponta para NULL
+
         Pessoa *atual = lista;
-        while(atual != NULL){
+        while(atual -> prox!= NULL){
             atual = atual->prox;
         }
         atual->prox = novaPessoa;
         return lista;
     }
- }
+}
+ 
+void mostrar(Pessoa *lista){
+    if(lista == NULL){
+        printf("Lista nula.");
+    }else{
+
+        Pessoa *atual = lista;
+        while(atual != NULL){
+            printf("Nome: %s", atual->nome);
+            printf("Idade: %d",atual->idade);
+            printf("id: %d", atual->id);
+            atual = atual->prox;
+
+        }
+    }
+}
+
+Pessoa* buscarPessoa(Pessoa *lista, int idBusca){
+    if(lista == NULL){
+        printf("Lista nula.");
+        return lista;
+    }else{
+        Pessoa *atual = lista;
+        while(atual != NULL){
+            if(atual-> id == idBusca){
+                printf("Nome: %s", atual->nome);
+                printf("Idade: %d",atual->idade);
+                printf("id: %d", atual->id);
+                return atual;
+            }
+            atual = atual->prox;
+        }
+        printf("Pessoa nao encontrada.");
+        return NULL;
+    }
+}
+void alterar(Pessoa *encontrada){
+    printf("Digite o nome:\n");
+    fflush(stdin);
+    fgets(encontrada->nome, sizeof(encontrada->nome), stdin);
+    fflush(stdin);
+    printf("Digite a idade:\n");
+    fflush(stdin);
+    scanf("%d", &encontrada->idade);
+    
+}
+Pessoa* excluir(Pessoa *lista, int idBusca){
+    Pessoa *anterior = NULL;
+    Pessoa *atual = lista;
+
+    while(atual != NULL && atual-> id != idBusca){
+        anterior = atual;
+        atual = atual->prox;
+    }
+    if(atual != NULL){
+        //logica de exclusao
+        if(anterior !=NULL){
+            //excluir alguem que nao esta no inicio da lista
+            anterior->prox = atual->prox;
+        }else{
+            //excluir que o primeiro da lista
+            lista = atual->prox;
+        }
+        free(atual);
+        printf("Excluido com sucesso.");
+
+    }else{
+        printf("Pessoa nao encontrada.");
+    }
+    return lista;
+}
 int main(){
 
-    int opcao;
+    int opcao, idBusca;
     Pessoa *lista = criarListaVazia();
+    Pessoa *encontrada;
 
     do{
         printf("1- Cadastrar.\n");
@@ -69,19 +146,32 @@ int main(){
         fflush(stdin);
         printf("5- Excluir.\n");
         fflush(stdin);
-        printf("0- Sair.\n");
+        printf("0- Sair.\n\n");
         scanf("%d", &opcao);
 
         switch(opcao){
             case 1:
-            cadastrar(lista);
+                cadastrar(lista);
             case 2:
+                mostrar(lista);
                 break;
             case 3:
+                printf("Digite o id para busca:\n");
+                scanf("%d", &idBusca);
+                encontrada = buscarPessoa(lista, idBusca);
                 break;
             case 4:
+                printf("Digite o id para busca:\n");
+                scanf("%d", &idBusca);
+                encontrada = buscarPessoa(lista, idBusca);
+                if(encontrada != NULL){
+                    alterar(encontrada);
+                }
                 break;
             case 5:
+                printf("Digite o id para busca:\n");
+                scanf("%d", &idBusca);
+                lista = excluir(lista, idBusca); 
                 break;
             default:
                 break;
