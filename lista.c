@@ -129,6 +129,16 @@ Pessoa* excluir(Pessoa *lista, int idBusca){
     }
     return lista;
 }
+
+void liberarLista(Pessoa *lista){
+    Pessoa *atual = lista;
+    Pessoa *proximaPessoa;
+    while(atual != NULL){
+        proximaPessoa = atual->prox;
+        free(atual);
+        atual = proximaPessoa;
+    }
+}
 int main(){
 
     int opcao, idBusca;
@@ -177,4 +187,5 @@ int main(){
                 break;
         }
     }while(opcao != 0);
+    liberarLista(lista);
 }
